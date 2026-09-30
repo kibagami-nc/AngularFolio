@@ -47,7 +47,8 @@ export class AnimDirective {
             case 'split':
             case 'chars': {
               split = SplitText.create(el, {
-                type: mode === 'chars' ? 'lines,chars' : 'lines,words',
+                // en mode lettres, on garde aussi les mots pour ne jamais couper au milieu d'un mot
+                type: mode === 'chars' ? 'lines,words,chars' : 'lines,words',
                 mask: 'lines',
                 linesClass: 'split-line',
               });

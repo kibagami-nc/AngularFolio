@@ -68,10 +68,13 @@
 .hero-text {
   align-self: center;
   padding-block: 32px;
+  container-type: inline-size;
 }
 
 h1 {
-  font-size: clamp(4rem, 12.5vw, 11.5rem);
+  /* « Raphaël » mesure ~2,95em : plafonné à la largeur de la colonne
+     (sinon il déborde avec une police ou un zoom agrandis) */
+  font-size: min(clamp(4rem, 12.5vw, 11.5rem), 31cqi);
   line-height: 0.86;
   letter-spacing: -0.045em;
   margin: 0 0 28px;
@@ -349,7 +352,7 @@ h1 {
         color: var(--yellow);
       }
       .desc span {
-        color: rgba(244, 240, 230, 0.8);
+        color: color-mix(in srgb, var(--paper) 80%, transparent);
       }
       .go {
         background: var(--yellow);
@@ -516,7 +519,7 @@ h1 {
       color: var(--yellow);
     }
     .more {
-      border-color: rgba(244, 240, 230, 0.2);
+      border-color: color-mix(in srgb, var(--paper) 20%, transparent);
     }
   }
 }

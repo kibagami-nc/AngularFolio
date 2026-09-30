@@ -141,7 +141,7 @@ import { PageHero } from '../../shared/page-hero';
 
     .cv-band { background: var(--ink); color: var(--paper); padding-block: clamp(64px, 10vw, 120px); }
     .cv { display: grid; grid-template-columns: 1fr 0.8fr; gap: clamp(32px, 6vw, 96px); align-items: center;
-      h2 em { color: var(--yellow); } p { opacity: .8; max-width: 44ch; } .label { color: rgba(244,240,230,.6); } }
+      h2 em { color: var(--yellow); } p { opacity: .8; max-width: 44ch; } .label { color: color-mix(in srgb, var(--paper) 60%, transparent); } }
     .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
     .btn.light { --fg: var(--paper); border-color: var(--paper); &::after { background: var(--paper); } &:hover { color: var(--ink); } }
     .btn.solid { --bg: var(--paper); --fg: var(--ink); border-color: var(--paper); &:hover { color: var(--paper); } }

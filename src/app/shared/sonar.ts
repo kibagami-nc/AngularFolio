@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, inject, input, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterNextRender, effect, inject, input, viewChild,
 } from '@angular/core';
 import { reducedMotion } from '../core/motion';
+import { Theme } from '../core/theme';
 
 export interface SonarContact {
   label: string;
@@ -35,13 +36,20 @@ export class Sonar {
 
   constructor() {
     const destroyRef = inject(DestroyRef);
+    const theme = inject(Theme);
+
+    // Relit la palette et redessine quand le thème change
+    effect(() => {
+      theme.mode();
+      if (!this.ctx) return;
+      this.readColors();
+      this.draw();
+    });
+
     afterNextRender(() => {
       const cv = this.canvas().nativeElement;
       this.ctx = cv.getContext('2d')!;
-      const css = getComputedStyle(document.documentElement);
-      for (const k of Object.keys(this.colors) as (keyof typeof this.colors)[]) {
-        this.colors[k] = css.getPropertyValue(`--${k}`).trim() || this.colors[k];
-      }
+      this.readColors();
 
       const ro = new ResizeObserver(() => this.resize());
       ro.observe(cv);
@@ -73,6 +81,13 @@ export class Sonar {
         cv.removeEventListener('pointerleave', leave);
       });
     });
+  }
+
+  private readColors() {
+    const css = getComputedStyle(document.documentElement);
+    for (const k of Object.keys(this.colors) as (keyof typeof this.colors)[]) {
+      this.colors[k] = css.getPropertyValue(`--${k}`).trim() || this.colors[k];
+    }
   }
 
   private resize() {

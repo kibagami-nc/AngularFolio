@@ -34,6 +34,13 @@ export class SmoothScroll {
     else (typeof target === 'string' ? document.querySelector(target) : target)?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  /** Bloque / débloque le défilement de la page (menu mobile ouvert). */
+  lock(on: boolean) {
+    document.documentElement.style.overflow = on ? 'hidden' : '';
+    if (on) this.lenis?.stop();
+    else this.lenis?.start();
+  }
+
   get velocity() {
     return this.lenis?.velocity ?? 0;
   }

@@ -54,11 +54,11 @@ import { SignalFlag } from '../shared/signal-flag';
   `,
   styles: `
     :host { display: block; background: var(--ink); color: var(--paper); margin-top: 0; padding: clamp(64px, 10vw, 120px) 0 28px; }
-    .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding-bottom: 48px; border-bottom: 1px solid rgba(244,240,230,.18); }
+    .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; padding-bottom: 48px; border-bottom: 1px solid color-mix(in srgb, var(--paper) 18%, transparent); }
     h2 { font-size: clamp(4rem, 14vw, 11rem); margin: 0; line-height: .9; em { color: var(--yellow); } }
     .flags { display: flex; gap: 6px; padding-bottom: 18px; }
     .grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; padding: 48px 0; }
-    .label { color: rgba(244,240,230,.55); margin-bottom: 18px; }
+    .label { color: color-mix(in srgb, var(--paper) 55%, transparent); margin-bottom: 18px; }
     .big { display: block; width: fit-content; font-family: var(--serif); font-size: clamp(1.3rem, 2.4vw, 1.9rem); text-decoration: none; margin-bottom: 8px;
       background: linear-gradient(var(--yellow), var(--yellow)) 0 100% / 0 1.5px no-repeat; transition: background-size .5s var(--ease); }
     .big:hover { background-size: 100% 1.5px; }
@@ -68,7 +68,7 @@ import { SignalFlag } from '../shared/signal-flag';
     .mono { font-family: var(--mono); font-size: .82rem; }
     .ext { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--yellow); }
     .bottom { display: flex; justify-content: space-between; align-items: center; font-size: .82rem; opacity: .7; }
-    .up { width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(244,240,230,.4); background: transparent; color: var(--paper);
+    .up { width: 48px; height: 48px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent); background: transparent; color: var(--paper);
       display: grid; place-items: center; cursor: pointer; ng-icon { transform: rotate(-45deg); } }
     .up:hover { background: var(--yellow); color: var(--ink); border-color: var(--yellow); }
     @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }

@@ -4,11 +4,13 @@ import {
   DestroyRef,
   ElementRef,
   afterNextRender,
+  effect,
   inject,
   input,
   viewChild,
 } from '@angular/core';
 import { gsap } from '../core/motion';
+import { Theme } from '../core/theme';
 
 export interface RadarPoint {
   label: string;
@@ -37,6 +39,13 @@ export class RadarChart {
   private size = 0;
 
   constructor() {
+    // Les couleurs sont lues à chaque dessin : il suffit de redessiner
+    const theme = inject(Theme);
+    effect(() => {
+      theme.mode();
+      this.draw();
+    });
+
     afterNextRender(() => {
       const cv = this.canvas().nativeElement;
       this.ctx = cv.getContext('2d')!;

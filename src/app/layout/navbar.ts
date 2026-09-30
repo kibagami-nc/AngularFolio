@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { filter } from 'rxjs';
-import { gsap, reducedMotion } from '../core/motion';
+import { SmoothScroll, gsap, reducedMotion } from '../core/motion';
+import { Theme } from '../core/theme';
 import { PAGES } from '../data/pages';
 import { PROFILE } from '../data/portfolio';
 import { MagneticDirective } from '../shared/magnetic.directive';
@@ -14,6 +15,7 @@ import { SignalFlag } from '../shared/signal-flag';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '(window:scroll)': 'onScroll()',
+    '(document:keydown.escape)': 'toggle(false)',
     '[class.hidden]': 'hidden()',
     '[class.solid]': 'solid()',
   },
@@ -29,6 +31,12 @@ import { SignalFlag } from '../shared/signal-flag';
           <li><a [routerLink]="l.path" routerLinkActive="active">{{ l.label }}</a></li>
         }
       </ul>
+
+      <button class="theme" (click)="toggleTheme($event)" [attr.aria-pressed]="dark()"
+        [attr.aria-label]="dark() ? 'Passer en mode clair' : 'Passer en mode sombre'"
+        [attr.title]="dark() ? 'Mode clair' : 'Mode sombre'">
+        <ng-icon [name]="dark() ? 'lucideSun' : 'lucideMoon'" size="18" />
+      </button>
 
       <a routerLink="/contact" class="btn solid cta" appMagnetic>Contact <ng-icon name="lucideArrowUpRight" size="16" /></a>
 
@@ -55,9 +63,13 @@ import { SignalFlag } from '../shared/signal-flag';
   styles: `
     :host { position: fixed; inset: 0 0 auto; z-index: 60; transition: transform .5s var(--ease), background .3s; }
     :host(.hidden) { transform: translateY(-100%); }
-    :host(.solid) { background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+    /* Le fond flouté est porté par un pseudo-élément : un backdrop-filter sur l'hôte
+       ferait du bandeau le repère du menu plein écran (position: fixed), qui serait alors rogné. */
+    :host::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; transition: opacity .3s;
+      background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); box-shadow: 0 1px 0 var(--line); }
+    :host(.solid)::before { opacity: 1; }
     .bar { display: flex; align-items: center; gap: 28px; height: 76px; position: relative; z-index: 2; }
-    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; }
     .flags { display: flex; gap: 3px; }
     .name { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; letter-spacing: -.01em; white-space: nowrap;
       em { font-style: italic; font-weight: 400; } }
@@ -69,15 +81,20 @@ import { SignalFlag } from '../shared/signal-flag';
     .links a:hover { color: var(--ink); }
     .links a:hover::after, .links a.active::after { transform: scaleX(1); transform-origin: left; }
     .links a.active { color: var(--ink); }
+    .theme { flex-shrink: 0; display: grid; place-items: center; width: 44px; height: 44px; margin-left: -12px; border: 1.5px solid var(--line);
+      border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; transition: border-color .2s, color .2s;
+      ng-icon { transition: transform .5s var(--ease); } }
+    .theme:hover { border-color: var(--ink); ng-icon { transform: rotate(-30deg); } }
     .cta { height: 44px; padding: 0 20px; font-size: .9rem; }
-    .burger { display: none; margin-left: auto; width: 44px; height: 44px; border: 1.5px solid var(--ink); border-radius: 50%; background: transparent;
+    .burger { display: none; flex-shrink: 0; margin-left: auto; width: 44px; height: 44px; border: 1.5px solid var(--ink); border-radius: 50%; background: transparent;
       cursor: pointer; position: relative;
       span { position: absolute; left: 12px; right: 12px; height: 1.5px; background: var(--ink); transition: transform .4s var(--ease); }
       span:first-child { top: 17px; } span:last-child { top: 24px; } }
     .burger[aria-expanded=true] span:first-child { transform: translateY(3.5px) rotate(45deg); }
     .burger[aria-expanded=true] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
 
-    .overlay { position: fixed; inset: 0; z-index: 1; background: var(--paper); padding-top: 110px; visibility: hidden;
+    .overlay { position: fixed; inset: 0; z-index: 1; background: var(--paper); padding: 110px 0 32px; visibility: hidden;
+      overflow-y: auto; overscroll-behavior: contain;
       clip-path: circle(0% at calc(100% - 44px) 38px); transition: clip-path .7s var(--ease), visibility 0s .7s; }
     .overlay.open { visibility: visible; clip-path: circle(150% at calc(100% - 44px) 38px); transition: clip-path .8s var(--ease); }
     .overlay ul { list-style: none; padding: 0; margin: 24px 0 40px; }
@@ -86,11 +103,27 @@ import { SignalFlag } from '../shared/signal-flag';
       text-decoration: none; line-height: 1.1;
       span { font-family: var(--mono); font-size: .8rem; color: var(--red); }
       app-flag { margin-left: auto; } }
+    /* Petits téléphones : on libère de la place pour que les boutons ne s'écrasent pas */
+    @media (max-width: 380px) {
+      .bar { gap: 12px; }
+      .flags { display: none; }
+      .name { font-size: 1.15rem; }
+      .theme, .burger { width: 40px; height: 40px; }
+      .burger span:first-child { top: 15px; } .burger span:last-child { top: 22px; }
+      .burger { margin-left: 8px; }
+    }
+    @media (max-height: 640px) {
+      .overlay { padding-top: 88px; }
+      .overlay ul { margin: 12px 0 24px; }
+      .overlay a { padding: 10px 0; font-size: clamp(1.7rem, 8vw, 2.4rem); }
+    }
 
     @media (max-width: 860px) {
       .links, .cta { display: none; }
-      .burger { display: block; }
-      :host:has(.overlay.open) { background: transparent; box-shadow: none; transform: none; }
+      .burger { display: block; margin-left: 12px; }
+      .theme { margin-left: auto; }
+      :host:has(.overlay.open) { transform: none; transition: none; }
+      :host:has(.overlay.open)::before { opacity: 0; }
     }
   `,
 })
@@ -98,6 +131,9 @@ export class Navbar {
   protected readonly p = PROFILE;
   protected readonly links = PAGES.filter((pg) => pg.path !== '/contact');
   protected readonly allPages = PAGES;
+  private readonly theme = inject(Theme);
+  protected readonly dark = computed(() => this.theme.mode() === 'dark');
+  private readonly scroll = inject(SmoothScroll);
   protected readonly open = signal(false);
   protected readonly hidden = signal(false);
   protected readonly solid = signal(false);
@@ -105,7 +141,7 @@ export class Navbar {
   private lastY = 0;
 
   constructor() {
-    inject(Router).events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.open.set(false));
+    inject(Router).events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.toggle(false));
     inject(DestroyRef);
 
     // Animation en cascade des liens du menu mobile
@@ -116,8 +152,16 @@ export class Navbar {
     });
   }
 
+  protected toggleTheme(e: MouseEvent) {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    this.theme.toggle(r.left + r.width / 2, r.top + r.height / 2);
+  }
+
   protected toggle(v = !this.open()) {
+    if (v === this.open()) return;
     this.open.set(v);
+    this.scroll.lock(v);
+    if (v) this.hidden.set(false);
   }
 
   protected onScroll() {
