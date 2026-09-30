@@ -1,0 +1,170 @@
+<!-- ═════════════ HERO ═════════════ -->
+<section class="hero">
+  <svg class="isobaths" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true" appAnim="draw" [animNow]="true">
+    <path d="M-20 640 C 220 560, 380 720, 620 650 S 1040 520, 1460 610" />
+    <path d="M-20 700 C 240 620, 420 790, 660 710 S 1080 590, 1460 680" />
+    <path d="M-20 770 C 260 690, 460 850, 700 780 S 1120 660, 1460 750" />
+    <path d="M-20 120 C 260 180, 520 60, 780 130 S 1200 220, 1460 140" />
+  </svg>
+
+  <div class="wrap hero-grid">
+    <div class="hero-top">
+      <span class="label" appAnim [animNow]="true">Journal de bord — Édition 2026</span>
+      <span class="mono coords" appAnim="scramble" [animNow]="true" [animDelay]="0.4">{{ p.coordonnees }}</span>
+    </div>
+
+    <div class="hero-text">
+      <h1>
+        <span class="l1" appAnim="chars" [animNow]="true" [animDelay]="0.1">{{ p.prenom }}</span>
+        <span class="l2" appAnim="chars" [animNow]="true" [animDelay]="0.3"><em>{{ p.nom }}</em></span>
+      </h1>
+      <p class="role" appAnim [animNow]="true" [animDelay]="0.7">{{ p.titre }}</p>
+      <p class="lead" appAnim="split" [animNow]="true" [animDelay]="0.8">
+        {{ p.accroche }} {{ p.intro }}
+      </p>
+      <div class="cta" appAnim="stagger" [animNow]="true" [animDelay]="1">
+        <a class="btn solid" routerLink="/projets" appMagnetic>Voir mes projets <ng-icon name="lucideArrowRight" size="17" /></a>
+        <a class="btn" [href]="p.cv" download appMagnetic>Mon CV <ng-icon name="lucideDownload" size="17" /></a>
+      </div>
+    </div>
+
+    <figure class="hero-sonar" appAnim [animNow]="true" [animDelay]="0.5">
+      <app-sonar [contacts]="contacts" />
+      <figcaption class="mono">Contacts détectés · survolez un écho</figcaption>
+    </figure>
+
+    <dl class="facts" appAnim="stagger" [animNow]="true" [animDelay]="1.1">
+      @for (f of facts; track f.k) {
+        <div><dt class="label no-dash">{{ f.k }}</dt><dd>{{ f.v }}</dd></div>
+      }
+    </dl>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true"><span>Défiler</span><i></i></div>
+</section>
+
+<app-marquee [items]="marquee" />
+
+<!-- ═════════════ LE MARIN ═════════════ -->
+<section class="band wrap about">
+  <figure class="photo" #photo appAnim="clip">
+    <img [src]="p.photo" [alt]="'Portrait de ' + p.prenom + ' ' + p.nom" width="480" height="1064" />
+    <figcaption class="mono">{{ p.prenom }}, {{ p.age }} ans — {{ p.ville }}</figcaption>
+  </figure>
+
+  <div class="about-text">
+    <span class="label" appAnim>01 — Le marin</span>
+    <h2 appAnim="split">Des réseaux solides, <em>un cap clair.</em></h2>
+    @for (para of p.presentation; track $index) {
+      <p class="soft" appAnim>{{ para }}</p>
+    }
+    <div class="objective" appAnim>
+      <app-flag letter="O" [size]="34" class="wave" />
+      <div>
+        <span class="label no-dash">Objectif</span>
+        <p>{{ p.objectif }}</p>
+      </div>
+    </div>
+    <ul class="interets" appAnim="stagger">
+      @for (i of p.interets; track i.label) {
+        <li><ng-icon [name]="i.icon" size="18" /> {{ i.label }}</li>
+      }
+    </ul>
+    <a routerLink="/parcours" class="arrow-link" appAnim>Lire mon parcours <ng-icon name="lucideArrowRight" size="16" /></a>
+  </div>
+</section>
+
+<!-- ═════════════ PLAN DE ROUTE (résumé de chaque page) ═════════════ -->
+<section class="band route" (pointermove)="follow($event)">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="label" appAnim>02 — Plan de route</span>
+        <h2 appAnim="split">Tout le portfolio, <em>escale par escale.</em></h2>
+      </div>
+      <p class="soft head-note" appAnim>Chaque escale résume une page du portfolio.</p>
+    </div>
+
+    @for (cat of categories; track cat.titre) {
+      <div class="category">
+        <h3 class="cat-title label no-dash" appAnim>{{ cat.titre }} <span>({{ cat.escales.length }})</span></h3>
+        <ul class="escales">
+          @for (e of cat.escales; track e.path) {
+            <li appAnim>
+              <a [routerLink]="e.path" (pointerenter)="hover(e)" (pointerleave)="hover(null)" (focus)="hover(e)" (blur)="hover(null)">
+                <span class="num mono">{{ e.num }}</span>
+                <app-flag [letter]="e.flag" [size]="34" />
+                <span class="title">{{ e.label }}</span>
+                <span class="desc">
+                  <span>{{ e.resume }}</span>
+                  <small class="mono">{{ e.data }}</small>
+                </span>
+                <span class="go"><ng-icon name="lucideArrowUpRight" size="22" /></span>
+              </a>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+  <!-- aperçu flottant qui suit le curseur -->
+  <div class="preview" #preview [class.show]="active()" aria-hidden="true" [style.--tone]="active()?.tone">
+    @if (active(); as a) {
+      <app-flag [letter]="a.flag" [size]="44" />
+      <strong>{{ a.figure }}</strong>
+      <span class="mono">{{ a.figureLabel }}</span>
+    }
+  </div>
+</section>
+
+<!-- ═════════════ PROJETS (défilement horizontal) ═════════════ -->
+<section class="projects" #pin>
+  <div class="wrap proj-head">
+    <div>
+      <span class="label">03 — Projets</span>
+      <h2>Carnet de <em>missions.</em></h2>
+    </div>
+    <a routerLink="/projets" class="arrow-link">Tous les projets <ng-icon name="lucideArrowRight" size="16" /></a>
+  </div>
+
+  <div class="track" #track>
+    @for (pr of projets; track pr.id; let i = $index) {
+      <a class="proj" [routerLink]="['/projets', pr.id]">
+        <div class="proj-top">
+          <span class="mono">{{ (i + 1).toString().padStart(2, '0') }} / {{ projets.length.toString().padStart(2, '0') }}</span>
+          <span class="chip">{{ pr.contexte }}</span>
+        </div>
+        <h3>{{ pr.titre }}</h3>
+        <p class="soft">{{ pr.resume }}</p>
+        <div class="codes">
+          @for (id of pr.competences; track id) {
+            @let c = comp(id);
+            @if (c) { <span class="code" [class]="'bloc-' + c.bloc">{{ c.code }}</span> }
+          }
+        </div>
+        <div class="chips">@for (t of pr.tags; track t) { <span class="chip">{{ t }}</span> }</div>
+        <span class="more">Ouvrir la fiche <ng-icon name="lucideArrowUpRight" size="16" /></span>
+      </a>
+    }
+    <a class="proj end" routerLink="/competences">
+      <span class="mono">Synthèse</span>
+      <h3>Voir comment ces projets couvrent <em>tout le référentiel</em></h3>
+      <span class="more">Compétences <ng-icon name="lucideArrowUpRight" size="16" /></span>
+    </a>
+  </div>
+
+  <div class="wrap"><div class="bar"><i #progress></i></div></div>
+</section>
+
+<!-- ═════════════ APPEL ═════════════ -->
+<section class="band wrap final">
+  <span class="label" appAnim>04 — Prendre contact</span>
+  <h2 appAnim="split">Un stage, une alternance ? <em>Parlons-en.</em></h2>
+  <div class="final-row">
+    <p class="soft" appAnim>{{ p.disponibilite }}. {{ p.reponse }}</p>
+    <a routerLink="/contact" class="circle" appMagnetic [strength]="0.45">
+      <span>Écrire</span><ng-icon name="lucideArrowUpRight" size="26" />
+    </a>
+  </div>
+</section>

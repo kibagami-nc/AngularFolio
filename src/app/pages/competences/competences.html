@@ -1,0 +1,159 @@
+<app-page-hero num="03" label="Compétences" flag="C" title="Ce que je sais" titleEm="faire."
+  intro="Mes compétences clés, le référentiel officiel du BTS SIO option SISR et la preuve de chaque compétence dans mes projets." />
+
+<!-- ═════ Compétences clés ═════ -->
+<section class="wrap band">
+  <div class="cles" appAnim="stagger">
+    @for (c of cles; track c.titre; let i = $index) {
+      <article>
+        <div class="cle-top">
+          <span class="n">0{{ i + 1 }}</span>
+          <ng-icon [name]="c.icon" size="26" />
+        </div>
+        <h3>{{ c.titre }}</h3>
+        <p class="soft">{{ c.description }}</p>
+        <div class="chips">@for (t of c.tags; track t) { <span class="chip">{{ t }}</span> }</div>
+      </article>
+    }
+  </div>
+</section>
+
+<!-- ═════ Référentiel ═════ -->
+<section class="band ref">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="label" appAnim>Référentiel BTS SIO — SISR</span>
+        <h2 appAnim="split">{{ covered }} compétences sur {{ competences.length }}, <em>toutes couvertes.</em></h2>
+      </div>
+    </div>
+
+    <div class="ref-grid">
+      <div class="radar-box" appAnim>
+        <app-radar-chart [points]="radar" ariaLabel="Radar de couverture des compétences du référentiel" />
+        <div class="bloc-bars">
+          @for (b of byBloc; track b.bloc.id) {
+            <div [class]="'bloc-' + b.bloc.id">
+              <span class="mono">Bloc {{ b.bloc.id }}</span>
+              <div class="bar"><i [style.width.%]="(b.covered / b.total) * 100"></i></div>
+              <span class="mono">{{ b.covered }}/{{ b.total }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <div class="tabs" role="tablist">
+          @for (b of blocs; track b.id) {
+            <button role="tab" [attr.aria-selected]="bloc() === b.id" [class.on]="bloc() === b.id" [class]="'bloc-' + b.id"
+              (click)="selectBloc(b.id)">
+              <span class="mono">Bloc {{ b.id }} · {{ b.epreuve }}</span>
+              <strong>{{ b.titre }}</strong>
+            </button>
+          }
+        </div>
+
+        <ul class="acc">
+          @for (item of current(); track item.competence.id) {
+            <li [class.open]="openId() === item.competence.id" [class]="'bloc-' + item.competence.bloc">
+              <button (click)="toggle(item.competence.id)" [attr.aria-expanded]="openId() === item.competence.id">
+                <span class="code">{{ item.competence.code }}</span>
+                <span class="t">{{ item.competence.label }}</span>
+                <span class="cnt mono">{{ item.projets.length }} projet{{ item.projets.length > 1 ? 's' : '' }}</span>
+                <span class="plus" aria-hidden="true"></span>
+              </button>
+              <div class="panel">
+                <div class="inner">
+                  <span class="label no-dash">Critères du référentiel</span>
+                  <ul class="crit">@for (cr of item.competence.criteres; track cr) { <li>{{ cr }}</li> }</ul>
+                  <span class="label no-dash">Démontrée dans</span>
+                  <div class="chips">
+                    @for (pr of item.projets; track pr.id) {
+                      <a class="chip link" [routerLink]="['/projets', pr.id]">{{ pr.titre }} ↗</a>
+                    }
+                  </div>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════ Tableau de synthèse ═════ -->
+<section class="wrap band">
+  <div class="section-head">
+    <div>
+      <span class="label" appAnim>Tableau de synthèse</span>
+      <h2 appAnim="split">Projets × <em>compétences.</em></h2>
+    </div>
+  </div>
+
+  <div class="table-wrap" appAnim (pointerleave)="hover.set(null)">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2" class="sticky">Projet</th>
+          @for (b of blocs; track b.id) {
+            <th [attr.colspan]="countBloc(b.id)" class="bloc-th" [class]="'bloc-' + b.id">Bloc {{ b.id }}</th>
+          }
+        </tr>
+        <tr>
+          @for (c of competences; track c.id; let j = $index) {
+            <th class="comp-th" [class]="'bloc-' + c.bloc" [class.hl]="hover()?.c === j" [title]="c.label">{{ c.code }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (pr of projets; track pr.id; let i = $index) {
+          <tr [class.hl]="hover()?.r === i">
+            <th class="sticky"><a [routerLink]="['/projets', pr.id]">{{ pr.titre }}</a><small class="mono">{{ pr.contexte }}</small></th>
+            @for (c of competences; track c.id; let j = $index) {
+              <td [class]="'bloc-' + c.bloc" [class.hl]="hover()?.c === j" (pointerenter)="hover.set({ r: i, c: j })">
+                @if (pr.competences.includes(c.id)) { <span class="mark" [attr.aria-label]="c.code"></span> }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <th class="sticky">Total</th>
+          @for (c of coverage; track c.competence.id) { <td class="mono">{{ c.projets.length }}</td> }
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <p class="legend mono">
+    @for (b of blocs; track b.id) { <span [class]="'bloc-' + b.id"><i></i>Bloc {{ b.id }} — {{ b.titre }}</span> }
+  </p>
+</section>
+
+<!-- ═════ Certifications ═════ -->
+<section class="band certs">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="label" appAnim>Certifications</span>
+        <h2 appAnim="split">Brevets <em>en poche.</em></h2>
+      </div>
+    </div>
+    <ul class="cert-list">
+      @for (c of certifs; track c.nom) {
+        <li appAnim>
+          <span class="date mono">{{ c.date }}</span>
+          <div>
+            <h3>{{ c.nom }}</h3>
+            <p>{{ c.description }}</p>
+          </div>
+          <span class="detail">{{ c.detail }}</span>
+          <span class="state" [class.ok]="c.statut === 'Obtenue'">
+            <ng-icon [name]="c.statut === 'Obtenue' ? 'lucideCircleCheck' : 'lucideClock'" size="16" /> {{ c.statut }}
+          </span>
+        </li>
+      }
+    </ul>
+  </div>
+</section>
