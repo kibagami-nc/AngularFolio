@@ -141,7 +141,7 @@
   button {
     width: 100%;
     display: grid;
-    grid-template-columns: auto 1fr auto 24px;
+    grid-template-columns: auto minmax(0, 1fr) auto 24px;
     gap: 16px;
     align-items: center;
     padding: 20px 4px;
@@ -156,6 +156,8 @@
     font-family: var(--serif);
     font-size: 1.25rem;
     line-height: 1.25;
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
   .cnt {
     color: var(--mute);
@@ -362,7 +364,7 @@ tfoot .sticky {
   color: var(--paper);
 
   .label {
-    color: rgba(244, 240, 230, 0.6);
+    color: color-mix(in srgb, var(--paper) 60%, transparent);
   }
   h2 em {
     color: var(--yellow);
@@ -373,7 +375,7 @@ tfoot .sticky {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid rgba(244, 240, 230, 0.3);
+  border-top: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
 
   li {
     display: grid;
@@ -381,12 +383,12 @@ tfoot .sticky {
     gap: 24px;
     align-items: center;
     padding: 28px 0;
-    border-bottom: 1px solid rgba(244, 240, 230, 0.15);
+    border-bottom: 1px solid color-mix(in srgb, var(--paper) 15%, transparent);
     transition: padding 0.4s var(--ease), background 0.4s;
   }
   li:hover {
     padding-inline: 16px;
-    background: rgba(244, 240, 230, 0.05);
+    background: color-mix(in srgb, var(--paper) 5%, transparent);
   }
   h3 {
     font-size: clamp(1.5rem, 2.6vw, 2.2rem);
@@ -413,7 +415,7 @@ tfoot .sticky {
     font-family: var(--mono);
     font-size: 0.75rem;
     padding: 6px 12px;
-    border: 1px solid rgba(244, 240, 230, 0.4);
+    border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent);
     border-radius: 999px;
   }
   .state.ok {
@@ -433,7 +435,8 @@ tfoot .sticky {
     }
   }
   .ref-grid {
-    grid-template-columns: 1fr;
+    // minmax(0, …) : la colonne peut rétrécir sous la largeur de son contenu (petits téléphones)
+    grid-template-columns: minmax(0, 1fr);
   }
   .radar-box {
     position: static;
@@ -448,6 +451,15 @@ tfoot .sticky {
   }
   .cert-list .state {
     justify-self: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .acc button {
+    gap: 10px;
+  }
+  .acc .t {
+    font-size: 1.1rem;
   }
 }
 

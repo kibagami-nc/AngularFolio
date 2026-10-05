@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
-import { Flip, gsap, reducedMotion } from '../../core/motion';
+import { Flip, ScrollTrigger, gsap, reducedMotion } from '../../core/motion';
 import { PROJETS } from '../../data/portfolio';
 import { competenceById } from '../../data/referentiel';
 import { AnimDirective } from '../../shared/anim.directive';
@@ -95,17 +95,20 @@ export class Projets {
     const items = this.list().nativeElement.querySelectorAll('li');
     const state = Flip.getState(items);
     this.filtre.set(c);
-    if (reducedMotion()) return;
     afterNextRender(
-      () =>
+      () => {
+        // La hauteur de la page change : on recale les déclencheurs de scroll (pied de page…)
+        if (reducedMotion()) return ScrollTrigger.refresh();
+        // Pas de `absolute` : les cartes restent dans le flux, la liste garde sa hauteur
+        // et le pied de page ne remonte pas sous les cartes pendant l'animation.
         Flip.from(state, {
           duration: 0.7,
           ease: 'expo.out',
-          absolute: true,
           stagger: 0.04,
           onEnter: (els) => gsap.fromTo(els, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.6 }),
-          onLeave: (els) => gsap.to(els, { opacity: 0, scale: 0.9, duration: 0.4 }),
-        }),
+          onComplete: () => ScrollTrigger.refresh(),
+        });
+      },
       { injector: this.injector },
     );
   }

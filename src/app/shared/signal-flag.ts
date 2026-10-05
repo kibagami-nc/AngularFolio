@@ -43,7 +43,7 @@ const FLAGS: Record<string, string> = {
     [attr.aria-label]="'Pavillon ' + letter()" [innerHTML]="svg()"></svg>`,
   styles: `
     :host { display: inline-block; line-height: 0; }
-    svg { box-shadow: 0 0 0 1px rgba(13,35,66,.18); border-radius: 1px; transform-origin: left center; }
+    svg { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 1px; transform-origin: left center; }
     :host(.wave) svg { animation: wave 3.2s ease-in-out infinite; animation-delay: var(--d, 0s); }
     @keyframes wave { 0%,100% { transform: skewY(0) scaleX(1); } 50% { transform: skewY(-4deg) scaleX(.96); } }
     @media (prefers-reduced-motion: reduce) { :host(.wave) svg { animation: none; } }

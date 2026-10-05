@@ -30,6 +30,38 @@
   color-scheme: light;
 }
 
+/* ───────── Mode sombre — carte marine de nuit ───────── */
+:root[data-theme='dark'] {
+  --paper: #0b111c;
+  --paper-2: #111a28;
+  --card: #141f30;
+  --ink: #efe9dc;
+  --ink-2: #c2c8d3;
+  --mute: #8a93a5;
+  --line: #2a3850;
+  --line-soft: #1b2638;
+  --red: #ef5b4c;
+  --yellow: #f0c050;
+  --sea: #6aa9d6;
+  --sea-soft: #1a3044;
+
+  --bloc-1: #6aa9d6;
+  --bloc-2: #ef5b4c;
+  --bloc-3: #d9a53a;
+  color-scheme: dark;
+
+  /* Les bandeaux « encre » (pied de page, défilant, certifications…)
+     restent des bandeaux marine à texte clair, comme en mode clair. */
+  :is(app-footer, app-marquee, .certs, .cv-band, .proj.end, .ink-band) {
+    --paper: #f4f0e6;
+    --ink: #16305a;
+  }
+
+  body::before {
+    opacity: 0.15;
+  }
+}
+
 *,
 *::before,
 *::after {
@@ -314,6 +346,21 @@ ng-icon {
   to {
     opacity: 0;
     transform: translateY(-12px);
+  }
+}
+/* Bascule de thème : dévoilement circulaire depuis le bouton */
+html.vt-theme::view-transition-old(root) {
+  animation: none;
+}
+html.vt-theme::view-transition-new(root) {
+  animation: 0.6s var(--ease) both theme-reveal;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0));
+  }
+  to {
+    clip-path: circle(150vmax at var(--vt-x, 50%) var(--vt-y, 0));
   }
 }
 @keyframes vt-in {

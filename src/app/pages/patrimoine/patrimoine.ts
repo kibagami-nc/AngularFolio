@@ -61,7 +61,7 @@ import { PageHero } from '../../shared/page-hero';
 
       @if (a.id === 'configurations') {
         <!-- Nomenclature + inventaire : l'inventaire sans GLPI -->
-        <section class="band dark">
+        <section class="band ink-band">
           <div class="wrap twin">
             <div>
               <span class="label" appAnim>Nomenclature</span>
@@ -150,22 +150,22 @@ import { PageHero } from '../../shared/page-hero';
     .points li::before { content: ''; position: absolute; left: 2px; top: 15px; width: 10px; height: 1.5px; background: var(--sea); }
     .qa .chips { margin-top: 16px; }
 
-    .dark { background: var(--ink); color: var(--paper); }
-    .dark .label { color: rgba(244,240,230,.6); }
-    .dark h2 em { color: var(--yellow); }
+    .ink-band { background: var(--ink); color: var(--paper); }
+    .ink-band .label { color: color-mix(in srgb, var(--paper) 60%, transparent); }
+    .ink-band h2 em { color: var(--yellow); }
     .twin { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
     .twin h2 { font-size: clamp(2rem, 4vw, 3rem); margin: 14px 0 28px; }
     .hostname { font-family: var(--mono); font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 24px; letter-spacing: .02em;
       span { border-bottom: 3px solid var(--yellow); padding-bottom: 2px; } i { font-style: normal; opacity: .5; margin: 0 4px; } }
     .parts { margin: 0; }
-    .parts div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid rgba(244,240,230,.15); }
+    .parts div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--paper) 15%, transparent); }
     .parts dt { font-family: var(--mono); color: var(--yellow); }
     .parts dd { margin: 0; }
     .note { opacity: .75; font-size: .95rem; margin-top: 20px; }
     table { width: 100%; border-collapse: collapse; font-size: .95rem; }
     th { text-align: left; font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--yellow);
       font-weight: 500; padding: 0 12px 10px 0; border-bottom: 1px solid var(--paper); }
-    td { padding: 10px 12px 10px 0; border-bottom: 1px solid rgba(244,240,230,.15); }
+    td { padding: 10px 12px 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--paper) 15%, transparent); }
     td:first-child { font-weight: 600; white-space: nowrap; }
 
     .criteria { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
