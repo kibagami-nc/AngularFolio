@@ -13,6 +13,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/projet-detail/projet-detail').then((m) => m.ProjetDetail) },
   { path: 'competences', title: t('Compétences'),
     loadComponent: () => import('./pages/competences/competences').then((m) => m.Competences) },
+  { path: 'patrimoine', title: t('Patrimoine informatique'),
+    loadComponent: () => import('./pages/patrimoine/patrimoine').then((m) => m.Patrimoine) },
   { path: 'veille', title: t('Veille technologique'),
     loadComponent: () => import('./pages/veille/veille').then((m) => m.Veille) },
   { path: 'contact', title: t('Contact'),

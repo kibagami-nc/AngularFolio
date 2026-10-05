@@ -11,7 +11,7 @@ import { PageHero } from '../../shared/page-hero';
   imports: [PageHero, NgIcon, ReactiveFormsModule, AnimDirective, MagneticDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-hero num="05" label="Contact" flag="K" title="N'hésite pas à" titleEm="m'écrire."
+    <app-page-hero num="06" label="Contact" flag="K" title="N'hésite pas à" titleEm="m'écrire."
       [intro]="p.disponibilite + '. ' + p.reponse" />
 
     <section class="wrap band grid">

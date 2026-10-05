@@ -9,7 +9,7 @@ import { PageHero } from '../../shared/page-hero';
   imports: [PageHero, NgIcon, AnimDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-page-hero num="04" label="Veille technologique" flag="V" title="L'IA dans" titleEm="les armées." [intro]="v.intro">
+    <app-page-hero num="05" label="Veille technologique" flag="V" title="L'IA dans" titleEm="les armées." [intro]="v.intro">
       <div class="chips">@for (t of v.tags; track t) { <span class="chip">#{{ t }}</span> }</div>
     </app-page-hero>
 

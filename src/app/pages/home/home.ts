@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { ScrollTrigger, gsap, reducedMotion } from '../../core/motion';
 import { PAGES, PageInfo } from '../../data/pages';
-import { CERTIFICATIONS, EXPERIENCES, FORMATIONS, PROFILE, PROJETS, VEILLE } from '../../data/portfolio';
+import { CERTIFICATIONS, EXPERIENCES, FORMATIONS, PATRIMOINE, PROFILE, PROJETS, VEILLE } from '../../data/portfolio';
 import { COMPETENCES, competenceById } from '../../data/referentiel';
 import { coveredCount } from '../../data/stats';
 import { AnimDirective } from '../../shared/anim.directive';
@@ -68,6 +68,10 @@ export class Home {
     '/competences': {
       data: `${coveredCount()}/${COMPETENCES.length} compétences du référentiel · ${CERTIFICATIONS.length} certifications`,
       figure: `${coveredCount()}/${COMPETENCES.length}`, figureLabel: 'compétences couvertes', tone: 'var(--ink)',
+    },
+    '/patrimoine': {
+      data: `${PATRIMOINE.entreprise} · iTop, Knox Manage, PRTG, Active Directory`,
+      figure: '19', figureLabel: 'tablettes inventoriées', tone: 'var(--bloc-1)',
     },
     '/veille': {
       data: `${VEILLE.sujet} · ${VEILLE.articles.length} sources`,
